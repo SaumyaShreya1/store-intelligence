@@ -268,3 +268,9 @@ Processed from actual Purplle store footage across 5 cameras:
 | Busiest zone (normalised) | `BILLING_COUNTER` — score 100 |
 | Highest avg dwell time | `MAKEUP_WALL` — 1,723 ms |
 | Overall conversion rate | 34.2% |
+
+## Dashboard Screenshots
+
+![Store Intelligence Dashboard](docs/screenshots/dashboard.png)
+
+> Run locally: `streamlit run app_dashboard.py`

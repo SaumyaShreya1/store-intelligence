@@ -1,0 +1,61 @@
+{
+  "STORE_PURPLLE_001": {
+    "store_name": "Purplle Beauty Store",
+    "open_hours": { "open": "10:00", "close": "22:00" },
+    "cameras": {
+      "CAM_FLOOR_01": {
+        "description": "Main floor skincare and fragrance zone",
+        "clip_start": "2026-04-10T20:10:27Z",
+        "type": "floor",
+        "fps": 30,
+        "zones": {
+          "SKINCARE": [[0,200],[750,200],[750,950],[0,950]],
+          "FRAGRANCE_DISPLAY": [[750,400],[1150,400],[1150,950],[750,950]],
+          "BILLING_COUNTER": [[1150,150],[1920,150],[1920,950],[1150,950]]
+        }
+      },
+      "CAM_FLOOR_02": {
+        "description": "Main floor makeup and cosmetics zone",
+        "clip_start": "2026-04-10T20:10:02Z",
+        "type": "floor",
+        "fps": 30,
+        "zones": {
+          "MAKEUP_WALL": [[500,200],[1920,200],[1920,850],[500,850]],
+          "ACCESSORIES": [[0,150],[500,150],[500,850],[0,850]],
+          "SUMMER_DISPLAY": [[600,700],[1200,700],[1200,1080],[600,1080]]
+        }
+      },
+      "CAM_ENTRY_01": {
+        "description": "Glass entry and exit door threshold",
+        "clip_start": "2026-04-10T20:10:00Z",
+        "type": "entry",
+        "fps": 30,
+        "entry_line_y": 420,
+        "zones": {
+          "ENTRY_THRESHOLD": [[100,350],[900,350],[900,600],[100,600]],
+          "STORE_INTERIOR": [[0,0],[700,0],[700,350],[0,350]]
+        }
+      },
+      "CAM_STOCKROOM_01": {
+        "description": "Stockroom back office",
+        "clip_start": "2026-04-10T20:09:45Z",
+        "type": "stockroom",
+        "fps": 25,
+        "zones": {
+          "STOCKROOM": [[0,0],[1920,0],[1920,1080],[0,1080]]
+        }
+      },
+      "CAM_BILLING_01": {
+        "description": "Billing counter and POS terminal",
+        "clip_start": "2026-04-10T20:09:48Z",
+        "type": "billing",
+        "fps": 25,
+        "zones": {
+          "BILLING_QUEUE": [[0,300],[500,300],[500,1080],[0,1080]],
+          "POS_TERMINAL": [[0,150],[600,150],[600,700],[0,700]],
+          "HAIRCARE_BROWSE": [[600,0],[1200,0],[1200,600],[600,600]]
+        }
+      }
+    }
+  }
+}

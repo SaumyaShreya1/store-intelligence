@@ -373,7 +373,7 @@ with col_b:
 if has_real_data:
     st.markdown("<div class='section-header'>Recent Events</div>", unsafe_allow_html=True)
     st.dataframe(
-        df.tail(50)[["timestamp", "event_type", "track_id", "zone", "camera_id"]],
+        df.tail(50)[[c for c in ["timestamp", "event_type", "track_id", "zone", "camera_id"] if c in df.columns]],
         use_container_width=True,
         hide_index=True,
     )

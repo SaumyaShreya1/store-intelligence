@@ -1,0 +1,17 @@
+{
+  "total_events": 8935,
+  "entry_events": 270,
+  "exit_events": 371,
+  "reentry_events": 3260,
+  "zone_enter_events": 4542,
+  "billing_queue_events": 228,
+  "unique_visitors": 1916,
+  "cameras_processed": 5,
+  "per_camera": {
+    "CAM_BILLING_01": 399,
+    "CAM_ENTRY_01": 825,
+    "CAM_FLOOR_01": 860,
+    "CAM_FLOOR_02": 797,
+    "CAM_STOCKROOM_01": 6054
+  }
+}

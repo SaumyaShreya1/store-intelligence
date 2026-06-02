@@ -1,0 +1,13 @@
+{
+  "status": "DEGRADED",
+  "uptime_seconds": 355.8,
+  "stores": [
+    {
+      "store_id": "STORE_PURPLLE_001",
+      "last_event_at": "2026-04-10T20:12:45Z",
+      "status": "STALE_FEED",
+      "lag_seconds": 4462322.412366
+    }
+  ],
+  "checked_at": "2026-06-01T11:44:47Z"
+}

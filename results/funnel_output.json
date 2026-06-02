@@ -1,0 +1,25 @@
+{
+  "store_id": "STORE_PURPLLE_001",
+  "stages": [
+    {
+      "stage": "Entry",
+      "count": 222,
+      "drop_off_pct": 0.0
+    },
+    {
+      "stage": "Zone Visit",
+      "count": 30,
+      "drop_off_pct": 86.5
+    },
+    {
+      "stage": "Billing Queue",
+      "count": 0,
+      "drop_off_pct": 100.0
+    },
+    {
+      "stage": "Purchase",
+      "count": 0,
+      "drop_off_pct": 0.0
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "store_id": "STORE_PURPLLE_001",
+  "anomalies": [
+    {
+      "anomaly_id": "533d9e76-0ed8-42c2-8177-655d8fd91d69",
+      "anomaly_type": "BILLING_QUEUE_SPIKE",
+      "severity": "WARN",
+      "description": "Queue depth 5 exceeds threshold of 3",
+      "suggested_action": "Deploy additional staff to billing counter immediately",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "BILLING_QUEUE"
+    },
+    {
+      "anomaly_id": "27dd25c9-2d91-4bbe-8111-c0359140ac65",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in ACCESSORIES for 30+ minutes",
+      "suggested_action": "Check ACCESSORIES display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "ACCESSORIES"
+    },
+    {
+      "anomaly_id": "9270bc3b-3539-43a0-8b85-22d4bccb2d97",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in BILLING_COUNTER for 30+ minutes",
+      "suggested_action": "Check BILLING_COUNTER display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "BILLING_COUNTER"
+    },
+    {
+      "anomaly_id": "d6fba884-6200-4717-abad-f1ff4c4c71bc",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in BILLING_QUEUE for 30+ minutes",
+      "suggested_action": "Check BILLING_QUEUE display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "BILLING_QUEUE"
+    },
+    {
+      "anomaly_id": "95358ab8-58bb-466e-ad78-2000ca410316",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in ENTRY_THRESHOLD for 30+ minutes",
+      "suggested_action": "Check ENTRY_THRESHOLD display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "ENTRY_THRESHOLD"
+    },
+    {
+      "anomaly_id": "a550adf2-cb9a-4e2b-8a14-e4118082fc75",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in FRAGRANCE_DISPLAY for 30+ minutes",
+      "suggested_action": "Check FRAGRANCE_DISPLAY display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "FRAGRANCE_DISPLAY"
+    },
+    {
+      "anomaly_id": "eec9e95f-50ee-492f-9883-41586122c72f",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in HAIRCARE_BROWSE for 30+ minutes",
+      "suggested_action": "Check HAIRCARE_BROWSE display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "HAIRCARE_BROWSE"
+    },
+    {
+      "anomaly_id": "90d51fe2-7710-428b-834a-8f704e77fd3c",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in MAKEUP_WALL for 30+ minutes",
+      "suggested_action": "Check MAKEUP_WALL display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "MAKEUP_WALL"
+    },
+    {
+      "anomaly_id": "94437404-f6a2-497a-a101-e73f6ccd1c09",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in POS_TERMINAL for 30+ minutes",
+      "suggested_action": "Check POS_TERMINAL display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "POS_TERMINAL"
+    },
+    {
+      "anomaly_id": "58bba751-dec6-4741-b46b-68ca827a3bc9",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in SKINCARE for 30+ minutes",
+      "suggested_action": "Check SKINCARE display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "SKINCARE"
+    },
+    {
+      "anomaly_id": "c2441092-6ee4-40fa-8cf3-9b1367e749d2",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in STOCKROOM for 30+ minutes",
+      "suggested_action": "Check STOCKROOM display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "STOCKROOM"
+    },
+    {
+      "anomaly_id": "f0ab7af3-e2a4-4d64-9a0a-8bc6d8910d8e",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in STORE_INTERIOR for 30+ minutes",
+      "suggested_action": "Check STORE_INTERIOR display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "STORE_INTERIOR"
+    },
+    {
+      "anomaly_id": "72f3f1f3-8a5f-4219-a72f-183329aa24af",
+      "anomaly_type": "DEAD_ZONE",
+      "severity": "INFO",
+      "description": "No customer visits in SUMMER_DISPLAY for 30+ minutes",
+      "suggested_action": "Check SUMMER_DISPLAY display and lighting",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": "SUMMER_DISPLAY"
+    },
+    {
+      "anomaly_id": "bb58966d-bcf1-4ae9-8f7b-757706249389",
+      "anomaly_type": "EMPTY_STORE",
+      "severity": "INFO",
+      "description": "No customer activity detected in 15+ minutes",
+      "suggested_action": "Verify store is open and check entry camera feed",
+      "detected_at": "2026-06-01T11:44:45Z",
+      "store_id": "STORE_PURPLLE_001",
+      "zone_id": null
+    }
+  ],
+  "checked_at": "2026-06-01T11:44:45Z"
+}

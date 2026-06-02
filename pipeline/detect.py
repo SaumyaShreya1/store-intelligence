@@ -218,7 +218,7 @@ def run(
     # Build detector
     if backend == "mog2":
         detector = MOG2Detector()
-        print(f"[detect] Backend: MOG2 (CPU)")
+        print("[detect] Backend: MOG2 (CPU)")
     else:
         try:
             detector = YOLOByteTrackDetector(model_name=yolo_model, conf=conf)

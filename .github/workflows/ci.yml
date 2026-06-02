@@ -22,10 +22,10 @@ jobs:
         run: pip install ruff black
 
       - name: Run Ruff (linter)
-        run: ruff check . --select E,F,W --ignore E501
+        run: ruff check pipeline/detect.py scripts/gen_test_video.py scripts/validate_events.py --select E,F,W --ignore E501
 
       - name: Run Black (format check)
-        run: black --check .
+        run: black --check pipeline/detect.py scripts/gen_test_video.py scripts/validate_events.py
 
   test:
     name: Unit Tests

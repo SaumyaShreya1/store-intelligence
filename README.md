@@ -1,4 +1,4 @@
-# Store Intelligence — Purplle Tech Challenge 2026
+﻿# Store Intelligence â€” Purplle Tech Challenge 2026
 
 [![CI](https://github.com/SaumyaShreya1/store-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/SaumyaShreya1/store-intelligence/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
@@ -6,7 +6,7 @@
 [![YOLOv8](https://img.shields.io/badge/YOLOv8-ultralytics-purple.svg)](https://github.com/ultralytics/ultralytics)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A production-ready CCTV-to-analytics pipeline that turns raw retail footage into real-time store metrics — visitor counts, zone dwell times, conversion funnels, and anomaly alerts.
+A production-ready CCTV-to-analytics pipeline that turns raw retail footage into real-time store metrics â€” visitor counts, zone dwell times, conversion funnels, and anomaly alerts.
 
 ---
 
@@ -37,31 +37,31 @@ A production-ready CCTV-to-analytics pipeline that turns raw retail footage into
 
 ```
 CCTV Footage (5 cameras)
-        │
-        ▼
-┌──────────────────────────────┐
-│   pipeline/detect.py         │
-│                              │
-│  ┌──────────┐ ┌───────────┐  │
-│  │  YOLOv8n │ │ ByteTrack │  │   ← default backend
-│  └──────────┘ └───────────┘  │
-│         OR                   │
-│  ┌──────────────────────┐    │
-│  │   MOG2 (CPU-only)    │    │   ← fallback / CI
-│  └──────────────────────┘    │
-└──────────────┬───────────────┘
-               │  .jsonl event stream
-               ▼
-┌──────────────────────────────┐
-│   FastAPI  (app/main.py)     │
-│                              │
-│  POST /events/ingest         │
-│  GET  /stores/{id}/metrics   │
-│  GET  /stores/{id}/funnel    │
-│  GET  /stores/{id}/heatmap   │
-│  GET  /stores/{id}/anomalies │
-│  GET  /health                │
-└──────────────────────────────┘
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   pipeline/detect.py         â”‚
+â”‚                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  YOLOv8n â”‚ â”‚ ByteTrack â”‚  â”‚   â† default backend
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚         OR                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚   MOG2 (CPU-only)    â”‚    â”‚   â† fallback / CI
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â”‚  .jsonl event stream
+               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   FastAPI  (app/main.py)     â”‚
+â”‚                              â”‚
+â”‚  POST /events/ingest         â”‚
+â”‚  GET  /stores/{id}/metrics   â”‚
+â”‚  GET  /stores/{id}/funnel    â”‚
+â”‚  GET  /stores/{id}/heatmap   â”‚
+â”‚  GET  /stores/{id}/anomalies â”‚
+â”‚  GET  /health                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 See [`docs/DESIGN.md`](docs/DESIGN.md) for the full architecture narrative and [`docs/CHOICES.md`](docs/CHOICES.md) for the three key technology decisions.
@@ -163,9 +163,9 @@ python scripts/feed_events.py --file data/events_all.jsonl --api http://localhos
 | `POST` | `/events/ingest` | Ingest up to 500 events (idempotent) |
 | `GET`  | `/stores/{id}/metrics` | Visitors, conversion rate, dwell time, queue depth |
 | `GET`  | `/stores/{id}/funnel` | Conversion funnel with per-stage drop-off % |
-| `GET`  | `/stores/{id}/heatmap` | Zone visit heatmap (normalised 0–100) |
+| `GET`  | `/stores/{id}/heatmap` | Zone visit heatmap (normalised 0â€“100) |
 | `GET`  | `/stores/{id}/anomalies` | Active anomalies: queue spike, dead zone, stale feed |
-| `GET`  | `/health` | Service health — returns `STALE_FEED` if no events in 5 min |
+| `GET`  | `/health` | Service health â€” returns `STALE_FEED` if no events in 5 min |
 
 Interactive docs available at `http://localhost:8000/docs` when the server is running.
 
@@ -188,7 +188,7 @@ Every push to `main` or `dev` and every pull request triggers the pipeline defin
 | Job | What it checks |
 |-----|---------------|
 | **Lint** | Ruff (style) + Black (formatting) |
-| **Unit Tests** | `pytest tests/` — all 15 cases |
+| **Unit Tests** | `pytest tests/` â€” all 15 cases |
 | **Detection Smoke Test** | Generates a synthetic video, runs MOG2 detector, validates output schema |
 | **API Integration Tests** | Spins up FastAPI, hits `/health` and all endpoints |
 | **Docker Build** | `docker compose build` + container smoke test |
@@ -208,8 +208,8 @@ Processed from actual Purplle store footage:
 | Exit events | 371 |
 | Re-entry events | 3,260 |
 | Billing queue joins | 228 |
-| Busiest zone (normalised) | `BILLING_COUNTER` — score 100 |
-| Highest avg dwell time | `MAKEUP_WALL` — 1,723 ms |
+| Busiest zone (normalised) | `BILLING_COUNTER` â€” score 100 |
+| Highest avg dwell time | `MAKEUP_WALL` â€” 1,723 ms |
 
 ---
 
@@ -217,11 +217,11 @@ Processed from actual Purplle store footage:
 
 At 40+ live stores:
 
-1. **Database** — swap SQLite for PostgreSQL (`DATABASE_URL` env var)
-2. **Ingest queue** — add Redis Streams for burst write buffering
-3. **Read scaling** — separate read replicas for metrics queries
-4. **Detection** — YOLOv8 + ByteTrack already in place; attach GPU nodes and set `--backend yolo`
-5. **Multi-camera fusion** — cross-camera re-ID with CLIP or OSNet embeddings to deduplicate visitors seen on multiple cameras
+1. **Database** â€” swap SQLite for PostgreSQL (`DATABASE_URL` env var)
+2. **Ingest queue** â€” add Redis Streams for burst write buffering
+3. **Read scaling** â€” separate read replicas for metrics queries
+4. **Detection** â€” YOLOv8 + ByteTrack already in place; attach GPU nodes and set `--backend yolo`
+5. **Multi-camera fusion** â€” cross-camera re-ID with CLIP or OSNet embeddings to deduplicate visitors seen on multiple cameras
 
 ---
 
@@ -240,8 +240,8 @@ The dashboard shows:
 |-------|-----------------|
 | KPI row | Unique visitors, conversion rate, avg dwell time, queue depth, billing joins |
 | Hourly traffic | Bar chart of visitor count per hour |
-| Zone heatmap | Normalised 0–100 score per zone |
-| Conversion funnel | Entry → Browse → Dwell → Billing → Purchase with drop-off % |
+| Zone heatmap | Normalised 0â€“100 score per zone |
+| Conversion funnel | Entry â†’ Browse â†’ Dwell â†’ Billing â†’ Purchase with drop-off % |
 | Anomalies | Queue spike alerts, stale feed warnings, re-entry notes |
 | Raw events table | Last 50 events from your `.jsonl` file |
 
@@ -254,8 +254,8 @@ The dashboard shows:
 The re-entry count of **3,260** is expected behaviour for MOG2 background subtraction:
 
 - MOG2 tracks blobs per frame with no persistent ID across occlusions
-- Every time a person exits the camera frame and re-enters — even briefly — a new blob ID is assigned
-- With 5 cameras × 8,935 total events over ~60 minutes of footage, a rate of ~0.36 re-entries per event is normal
+- Every time a person exits the camera frame and re-enters â€” even briefly â€” a new blob ID is assigned
+- With 5 cameras Ã— 8,935 total events over ~60 minutes of footage, a rate of ~0.36 re-entries per event is normal
 - **YOLOv8 + ByteTrack** (now the default backend) resolves this with Kalman-filter-based persistent IDs that survive short occlusions and frame exits
 
 ---
@@ -264,5 +264,6 @@ The re-entry count of **3,260** is expected behaviour for MOG2 background subtra
 > Run locally: `streamlit run app_dashboard.py`
 
 > **Note on video clips:** Raw CCTV footage is not included in the repo due to file size and privacy constraints. Detection was run on 5 proprietary clips provided as part of the challenge. To test the pipeline locally, generate a synthetic video using `python scripts/gen_test_video.py --frames 60 --output clips/test.mp4`
+
 
 

@@ -1,4 +1,4 @@
-# Store Intelligence — Purplle Tech Challenge 2026
+﻿# Store Intelligence — Purplle Tech Challenge 2026
 
 [![CI](https://github.com/SaumyaShreya1/store-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/SaumyaShreya1/store-intelligence/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
@@ -276,6 +276,7 @@ The re-entry count of **3,260** is expected behaviour for MOG2 background subtra
 > Run locally: `streamlit run app_dashboard.py`
 
 > **Note on video clips:** Raw CCTV footage is not included in the repo due to file size and privacy constraints. Detection was run on 5 proprietary clips provided as part of the challenge. To test the pipeline locally, generate a synthetic video using `python scripts/gen_test_video.py --frames 60 --output clips/test.mp4`
+
 
 
 

@@ -25,6 +25,10 @@ A production-ready CCTV-to-analytics pipeline that turns raw retail footage into
 
 ---
 
+## Dashboard Preview
+
+![Dashboard](results/dashboard.png)
+
 ## Architecture
 
 ```

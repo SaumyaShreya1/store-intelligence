@@ -225,6 +225,10 @@ Processed from actual Purplle store footage:
 
 ---
 
+## Key Business Insight
+
+Makeup Wall shows highest dwell time (1,723ms) but low conversion — recommend staff engagement or promotional display at this zone to convert browsers into buyers.
+
 ## Scaling to Production
 
 At 40+ live stores:

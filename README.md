@@ -37,6 +37,12 @@ A production-ready CCTV-to-analytics pipeline that turns raw retail footage into
 ### Conversion Funnel
 ![Funnel](results/funnel.png)
 
+### Zone Heatmap
+![Heatmap](results/heatmap.png)
+
+### Conversion Funnel
+![Funnel](results/funnel.png)
+
 ![Dashboard](results/dashboard.png)
 
 ## Architecture

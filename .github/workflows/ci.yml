@@ -123,7 +123,7 @@ jobs:
         run: curl -f http://localhost:8000/health
 
       - name: Run API integration tests
-        run: pytest tests/ -v -k "api" --tb=short
+        run: pytest tests/ -v --tb=short
 
   docker:
     name: Docker Build

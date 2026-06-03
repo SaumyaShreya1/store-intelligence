@@ -216,7 +216,7 @@ Processed from actual Purplle store footage:
 | Cameras processed | 5 |
 | Total events detected | 8,935 |
 | Unique visitors identified | 1,916 |
-| Entry events | 270 |
+| Entry events | 371 |
 | Exit events | 371 |
 | Re-entry events | 3,260 |
 | Billing queue joins | 228 |

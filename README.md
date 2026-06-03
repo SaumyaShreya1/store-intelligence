@@ -260,26 +260,6 @@ The re-entry count of **3,260** is expected behaviour for MOG2 background subtra
 
 ---
 
-## Sample Results
-
-Processed from actual Purplle store footage across 5 cameras:
-
-| Metric | Value |
-|--------|-------|
-| Cameras processed | 5 |
-| Total events detected | 8,935 |
-| Unique visitors identified | 1,916 |
-| Entry events | 270 |
-| Exit events | 371 |
-| Re-entry events (MOG2 blob resets) | 3,260 |
-| Billing queue joins | 228 |
-| Busiest zone (normalised) | `BILLING_COUNTER` — score 100 |
-| Highest avg dwell time | `MAKEUP_WALL` — 1,723 ms |
-| Overall conversion rate | 34.2% |
-
-## Dashboard Screenshots
-
-![Store Intelligence Dashboard](docs/screenshots/dashboard.png)
 
 > Run locally: `streamlit run app_dashboard.py`
 

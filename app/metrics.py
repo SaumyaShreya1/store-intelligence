@@ -27,7 +27,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Unique visitors from entry events (exclude staff)
         row = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) as cnt FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchone()
         unique_visitors = row["cnt"] if row else 0
@@ -45,7 +45,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
                          - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
             rows = conn.execute("""
                 SELECT DISTINCT visitor_id FROM events
-                WHERE store_id=? AND zone_type='BILLING'
+                WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
                 AND is_staff=0 AND timestamp BETWEEN ? AND ?
             """, (store_id, win_start, ts)).fetchall()
             for r in rows:
@@ -56,7 +56,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Average dwell from zone_exited events
         row = conn.execute("""
             SELECT AVG(dwell_ms) as avg FROM events
-            WHERE store_id=? AND event_type='zone_exited'
+            WHERE store_id=? AND event_type IN ('zone_exited','ZONE_EXIT')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchone()
         avg_dwell = row["avg"] or 0.0
@@ -64,7 +64,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Current queue depth
         row = conn.execute("""
             SELECT queue_depth FROM events
-            WHERE store_id=? AND event_type='queue_completed'
+            WHERE store_id=? AND event_type IN ('queue_completed','queue_completed')
             ORDER BY timestamp DESC LIMIT 1
         """, (store_id,)).fetchone()
         queue_depth = row["queue_depth"] or 0 if row else 0
@@ -72,12 +72,12 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Abandonment rate
         ab_row = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) as cnt FROM events
-            WHERE store_id=? AND event_type='queue_abandoned'
+            WHERE store_id=? AND event_type IN ('queue_abandoned','BILLING_QUEUE_ABANDON')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchone()
         joins_row = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) as cnt FROM events
-            WHERE store_id=? AND event_type IN ('queue_completed','queue_abandoned')
+            WHERE store_id=? AND event_type IN ('queue_completed','queue_abandoned','BILLING_QUEUE_JOIN','BILLING_QUEUE_ABANDON')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchone()
         ab_cnt = ab_row["cnt"] if ab_row else 0
@@ -93,7 +93,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
             FROM events
             WHERE store_id=? AND zone_id IS NOT NULL
             AND is_staff=0 AND timestamp>=?
-            AND event_type='zone_exited'
+            AND event_type IN ('zone_exited','ZONE_EXIT')
             GROUP BY zone_id
         """, (store_id, cutoff)).fetchall()
 
@@ -113,7 +113,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Gender breakdown
         gender_rows = conn.execute("""
             SELECT gender, COUNT(DISTINCT visitor_id) as cnt FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=? AND gender IS NOT NULL
             GROUP BY gender
         """, (store_id, cutoff)).fetchall()
@@ -122,7 +122,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         # Age breakdown
         age_rows = conn.execute("""
             SELECT age_bucket, COUNT(DISTINCT visitor_id) as cnt FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=? AND age_bucket IS NOT NULL
             GROUP BY age_bucket
         """, (store_id, cutoff)).fetchall()
@@ -164,19 +164,19 @@ async def get_funnel(store_id: str, window_minutes: int = 480):
 
         entry_vis = set(r["visitor_id"] for r in conn.execute("""
             SELECT DISTINCT visitor_id FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchall())
 
         zone_vis = set(r["visitor_id"] for r in conn.execute("""
             SELECT DISTINCT visitor_id FROM events
-            WHERE store_id=? AND event_type='zone_entered'
+            WHERE store_id=? AND event_type IN ('zone_entered','ZONE_ENTER')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchall()) & entry_vis
 
         billing_vis = set(r["visitor_id"] for r in conn.execute("""
             SELECT DISTINCT visitor_id FROM events
-            WHERE store_id=? AND zone_type='BILLING'
+            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchall()) & entry_vis
 
@@ -192,7 +192,7 @@ async def get_funnel(store_id: str, window_minutes: int = 480):
                    - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
             for r in conn.execute("""
                 SELECT DISTINCT visitor_id FROM events
-                WHERE store_id=? AND zone_type='BILLING'
+                WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
                 AND is_staff=0 AND timestamp BETWEEN ? AND ?
             """, (store_id, win, ts)).fetchall():
                 purchased_vis.add(r["visitor_id"])
@@ -229,7 +229,7 @@ async def get_heatmap(store_id: str, window_minutes: int = 480):
 
         session_count = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchone()[0] or 0
 
@@ -249,3 +249,4 @@ async def get_heatmap(store_id: str, window_minutes: int = 480):
         return StoreHeatmap(store_id=store_id, zones=zones)
     finally:
         conn.close()
+

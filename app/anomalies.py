@@ -20,7 +20,7 @@ async def get_anomalies(store_id: str):
         cutoff_5min = (now - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
         row = conn.execute("""
             SELECT COUNT(*) as cnt FROM events
-            WHERE store_id=? AND event_type IN ('queue_completed','queue_abandoned')
+            WHERE store_id=? AND event_type IN ('queue_completed','queue_abandoned','BILLING_QUEUE_JOIN')
             AND timestamp>=?
         """, (store_id, cutoff_5min)).fetchone()
         if row and row["cnt"] and row["cnt"] > 3:
@@ -39,25 +39,25 @@ async def get_anomalies(store_id: str):
 
         cur_entry = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cur_window)).fetchone()[0] or 0
 
         cur_billing = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND zone_type='BILLING'
+            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cur_window)).fetchone()[0] or 0
 
         hist_entry = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND event_type='entry'
+            WHERE store_id=? AND event_type IN ('entry','ENTRY')
             AND is_staff=0 AND timestamp BETWEEN ? AND ?
         """, (store_id, old_window, old_end)).fetchone()[0] or 0
 
         hist_billing = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND zone_type='BILLING'
+            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
             AND is_staff=0 AND timestamp BETWEEN ? AND ?
         """, (store_id, old_window, old_end)).fetchone()[0] or 0
 
@@ -113,3 +113,4 @@ async def get_anomalies(store_id: str):
         raise HTTPException(503, detail={"error": str(e), "type": "DATABASE_ERROR"})
     finally:
         conn.close()
+

@@ -1,10 +1,11 @@
-import uuid, json
+﻿import uuid, json
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException
 from app.models import Anomaly
 from app.db import get_conn
 
 router = APIRouter()
+
 
 @router.get("/stores/{store_id}/anomalies")
 async def get_anomalies(store_id: str):
@@ -16,7 +17,6 @@ async def get_anomalies(store_id: str):
         def ts():
             return now.strftime("%Y-%m-%dT%H:%M:%S")
 
-        # 1. Queue spike - count recent queue joins
         cutoff_5min = (now - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
         row = conn.execute("""
             SELECT COUNT(*) as cnt FROM events
@@ -32,10 +32,9 @@ async def get_anomalies(store_id: str):
                 suggested_action="Deploy additional staff to billing counter immediately",
                 detected_at=ts()))
 
-        # 2. Conversion drop vs 7-day avg
         cur_window = (now - timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S")
         old_window = (now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S")
-        old_end    = (now - timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S")
+        old_end    = cur_window
 
         cur_entry = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
@@ -45,7 +44,7 @@ async def get_anomalies(store_id: str):
 
         cur_billing = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
+            WHERE store_id=? AND (zone_type='BILLING' OR zone_id LIKE '%BILLING%')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cur_window)).fetchone()[0] or 0
 
@@ -57,7 +56,7 @@ async def get_anomalies(store_id: str):
 
         hist_billing = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) FROM events
-            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
+            WHERE store_id=? AND (zone_type='BILLING' OR zone_id LIKE '%BILLING%')
             AND is_staff=0 AND timestamp BETWEEN ? AND ?
         """, (store_id, old_window, old_end)).fetchone()[0] or 0
 
@@ -74,7 +73,6 @@ async def get_anomalies(store_id: str):
                     suggested_action="Review product placement and staff engagement in floor zones",
                     detected_at=ts()))
 
-        # 3. Dead zone - no visits in 30 min
         dead_cutoff = (now - timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%S")
         zone_rows = conn.execute("""
             SELECT zone_id, MAX(timestamp) as last_visit FROM events
@@ -92,7 +90,6 @@ async def get_anomalies(store_id: str):
                     suggested_action=f"Check {r['zone_id']} display and lighting",
                     detected_at=ts()))
 
-        # 4. Empty store 15+ min
         last_ev = conn.execute("""
             SELECT MAX(timestamp) as last FROM events
             WHERE store_id=? AND is_staff=0
@@ -113,4 +110,3 @@ async def get_anomalies(store_id: str):
         raise HTTPException(503, detail={"error": str(e), "type": "DATABASE_ERROR"})
     finally:
         conn.close()
-

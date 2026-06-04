@@ -1,4 +1,4 @@
-import uuid, json, logging
+﻿import uuid, json, logging
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Request, HTTPException
 from app.models import StoreMetrics, ZoneMetric, StoreFunnel, FunnelStage, StoreHeatmap, HeatmapZone
@@ -7,14 +7,21 @@ from app.db import get_conn
 router = APIRouter()
 log = logging.getLogger("metrics")
 
+
 def _cutoff(window_minutes=480):
     if window_minutes >= 999999:
         return "2000-01-01T00:00:00"
     return (datetime.now(timezone.utc) - timedelta(minutes=window_minutes)).strftime("%Y-%m-%dT%H:%M:%S")
 
+
 def _norm_ts(ts):
-    """Normalize timestamp for comparison - strip Z suffix."""
-    return ts.replace("Z", "") if ts else ""
+    if not ts:
+        return ""
+    ts = ts.replace("Z", "")
+    if "." in ts:
+        ts = ts[:19]
+    return ts[:19]
+
 
 @router.get("/stores/{store_id}/metrics", response_model=StoreMetrics)
 async def get_metrics(store_id: str, window_minutes: int = 480, request: Request = None):
@@ -24,7 +31,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
     try:
         cutoff = _cutoff(window_minutes)
 
-        # Unique visitors from entry events (exclude staff)
         row = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) as cnt FROM events
             WHERE store_id=? AND event_type IN ('entry','ENTRY')
@@ -32,7 +38,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         """, (store_id, cutoff)).fetchone()
         unique_visitors = row["cnt"] if row else 0
 
-        # POS-based conversion
         txns = conn.execute("""
             SELECT timestamp FROM pos_transactions
             WHERE store_id=? AND timestamp>=? ORDER BY timestamp
@@ -41,11 +46,11 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         converted = set()
         for txn in txns:
             ts = _norm_ts(txn["timestamp"])
-            win_start = (datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S")
+            win_start = (datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
                          - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
             rows = conn.execute("""
                 SELECT DISTINCT visitor_id FROM events
-                WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
+                WHERE store_id=? AND (zone_type='BILLING' OR zone_id LIKE '%BILLING%')
                 AND is_staff=0 AND timestamp BETWEEN ? AND ?
             """, (store_id, win_start, ts)).fetchall()
             for r in rows:
@@ -53,7 +58,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
 
         conversion_rate = len(converted) / unique_visitors if unique_visitors > 0 else 0.0
 
-        # Average dwell from zone_exited events
         row = conn.execute("""
             SELECT AVG(dwell_ms) as avg FROM events
             WHERE store_id=? AND event_type IN ('zone_exited','ZONE_EXIT')
@@ -61,15 +65,13 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         """, (store_id, cutoff)).fetchone()
         avg_dwell = row["avg"] or 0.0
 
-        # Current queue depth
         row = conn.execute("""
             SELECT queue_depth FROM events
-            WHERE store_id=? AND event_type IN ('queue_completed','queue_completed')
+            WHERE store_id=? AND event_type IN ('queue_completed','queue_abandoned','BILLING_QUEUE_JOIN')
             ORDER BY timestamp DESC LIMIT 1
         """, (store_id,)).fetchone()
-        queue_depth = row["queue_depth"] or 0 if row else 0
+        queue_depth = (row["queue_depth"] or 0) if row else 0
 
-        # Abandonment rate
         ab_row = conn.execute("""
             SELECT COUNT(DISTINCT visitor_id) as cnt FROM events
             WHERE store_id=? AND event_type IN ('queue_abandoned','BILLING_QUEUE_ABANDON')
@@ -84,7 +86,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         join_cnt = joins_row["cnt"] if joins_row else 0
         abandonment_rate = ab_cnt / join_cnt if join_cnt > 0 else 0.0
 
-        # Zone metrics
         zone_rows = conn.execute("""
             SELECT zone_id, zone_name,
                    is_revenue_zone,
@@ -110,7 +111,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
             for z in zones:
                 z.normalized_score = round(z.visit_count / max_v * 100, 1)
 
-        # Gender breakdown
         gender_rows = conn.execute("""
             SELECT gender, COUNT(DISTINCT visitor_id) as cnt FROM events
             WHERE store_id=? AND event_type IN ('entry','ENTRY')
@@ -119,7 +119,6 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
         """, (store_id, cutoff)).fetchall()
         gender_breakdown = {r["gender"]: r["cnt"] for r in gender_rows}
 
-        # Age breakdown
         age_rows = conn.execute("""
             SELECT age_bucket, COUNT(DISTINCT visitor_id) as cnt FROM events
             WHERE store_id=? AND event_type IN ('entry','ENTRY')
@@ -151,6 +150,7 @@ async def get_metrics(store_id: str, window_minutes: int = 480, request: Request
             age_breakdown=age_breakdown
         )
     except Exception as e:
+        log.error(json.dumps({"trace_id": trace_id, "error": str(e)}))
         raise HTTPException(503, detail={"error": str(e), "type": "DATABASE_ERROR"})
     finally:
         conn.close()
@@ -176,7 +176,7 @@ async def get_funnel(store_id: str, window_minutes: int = 480):
 
         billing_vis = set(r["visitor_id"] for r in conn.execute("""
             SELECT DISTINCT visitor_id FROM events
-            WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
+            WHERE store_id=? AND (zone_type='BILLING' OR zone_id LIKE '%BILLING%')
             AND is_staff=0 AND timestamp>=?
         """, (store_id, cutoff)).fetchall()) & entry_vis
 
@@ -188,11 +188,11 @@ async def get_funnel(store_id: str, window_minutes: int = 480):
         purchased_vis = set()
         for txn in txns:
             ts = _norm_ts(txn["timestamp"])
-            win = (datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S")
+            win = (datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
                    - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
             for r in conn.execute("""
                 SELECT DISTINCT visitor_id FROM events
-                WHERE store_id=? AND zone_type='BILLING' OR zone_id LIKE '%BILLING%'
+                WHERE store_id=? AND (zone_type='BILLING' OR zone_id LIKE '%BILLING%')
                 AND is_staff=0 AND timestamp BETWEEN ? AND ?
             """, (store_id, win, ts)).fetchall():
                 purchased_vis.add(r["visitor_id"])
@@ -208,6 +208,8 @@ async def get_funnel(store_id: str, window_minutes: int = 480):
             FunnelStage(stage="Purchase",      count=p, drop_off_pct=pct(p, b)),
         ]
         return StoreFunnel(store_id=store_id, stages=stages)
+    except Exception as e:
+        raise HTTPException(503, detail={"error": str(e), "type": "DATABASE_ERROR"})
     finally:
         conn.close()
 
@@ -247,6 +249,7 @@ async def get_heatmap(store_id: str, window_minutes: int = 480):
                     data_confidence=conf
                 ))
         return StoreHeatmap(store_id=store_id, zones=zones)
+    except Exception as e:
+        raise HTTPException(503, detail={"error": str(e), "type": "DATABASE_ERROR"})
     finally:
         conn.close()
-

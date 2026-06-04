@@ -7,20 +7,20 @@ from app.db import get_conn
 router = APIRouter()
 log = logging.getLogger("ingestion")
 
-ENTRY_EXIT_TYPES = {"entry", "exit"}
-ZONE_TYPES = {"zone_entered", "zone_exited"}
-QUEUE_TYPES = {"queue_completed", "queue_abandoned"}
+ENTRY_EXIT_TYPES = {"entry", "exit", "ENTRY", "EXIT"}
+ZONE_TYPES = {"zone_entered", "zone_exited", "ZONE_ENTER", "ZONE_EXIT", "ZONE_DWELL"}
+QUEUE_TYPES = {"queue_completed", "queue_abandoned", "BILLING_QUEUE_JOIN", "BILLING_QUEUE_ABANDON", "REENTRY"}
 ALL_VALID_TYPES = ENTRY_EXIT_TYPES | ZONE_TYPES | QUEUE_TYPES
 
 def _get_store_id(ev: dict) -> str:
     return ev.get("store_id") or ev.get("store_code") or ""
 
 def _get_timestamp(ev: dict) -> str:
-    return (ev.get("event_timestamp") or ev.get("event_time") or
+    return (ev.get("event_timestamp") or ev.get("timestamp") or ev.get("event_time") or
             ev.get("queue_join_ts") or "")
 
 def _get_visitor_id(ev: dict) -> str:
-    return str(ev.get("id_token") or ev.get("track_id") or "")
+    return str(ev.get("id_token") or ev.get("visitor_id") or ev.get("track_id") or "")
 
 def _get_event_id(ev: dict) -> str:
     if ev.get("queue_event_id"):
@@ -148,3 +148,9 @@ async def ingest_events(req: IngestRequest, request: Request):
     }))
     return IngestResponse(accepted=accepted, rejected=rejected,
                           duplicate=duplicate, errors=errors)
+
+
+
+
+
+

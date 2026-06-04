@@ -22,6 +22,12 @@ def _get_timestamp(ev: dict) -> str:
 def _get_visitor_id(ev: dict) -> str:
     return str(ev.get("id_token") or ev.get("track_id") or "")
 
+def _get_event_id(ev: dict) -> str:
+    if ev.get("queue_event_id"):
+        return ev["queue_event_id"]
+    raw = f"{ev.get('event_type')}:{_get_store_id(ev)}:{_get_visitor_id(ev)}:{_get_timestamp(ev)}"
+    return hashlib.md5(raw.encode()).hexdigest()
+
 def _validate(ev: dict) -> str:
     et = ev.get("event_type", "")
     if et not in ALL_VALID_TYPES:
@@ -50,7 +56,7 @@ async def ingest_events(req: IngestRequest, request: Request):
             store_id = _get_store_id(ev)
             visitor_id = _get_visitor_id(ev)
             timestamp = _get_timestamp(ev)
-            import hashlib`n            raw_key = f"{ev.get(chr(39)event_type{chr(39))}:{_get_store_id(ev)}:{_get_visitor_id(ev)}:{_get_timestamp(ev)}"`n            event_id = ev.get("queue_event_id") or hashlib.md5(raw_key.encode()).hexdigest()
+            event_id = _get_event_id(ev)
             try:
                 if event_type in ENTRY_EXIT_TYPES:
                     conn.execute("""
@@ -75,7 +81,6 @@ async def ingest_events(req: IngestRequest, request: Request):
                           json.dumps(ev)))
 
                 elif event_type in ZONE_TYPES:
-                    dwell_ms = 0
                     conn.execute("""
                         INSERT OR IGNORE INTO events
                         (event_id, store_id, camera_id, visitor_id, event_type,
@@ -90,7 +95,7 @@ async def ingest_events(req: IngestRequest, request: Request):
                           ev.get("zone_name"),
                           ev.get("zone_type"),
                           ev.get("is_revenue_zone", "Yes"),
-                          dwell_ms, 0, 1.0,
+                          0, 0, 1.0,
                           ev.get("gender"),
                           ev.get("age"),
                           ev.get("age_bucket"),
@@ -143,5 +148,3 @@ async def ingest_events(req: IngestRequest, request: Request):
     }))
     return IngestResponse(accepted=accepted, rejected=rejected,
                           duplicate=duplicate, errors=errors)
-
-

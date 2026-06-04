@@ -81,3 +81,19 @@ Claude suggested PostgreSQL. I chose SQLite WAL because it eliminates extra
 Docker service, 8935 events well within SQLite throughput, WAL handles
 concurrent reads from API and dashboard without blocking.
 
+
+
+## Schema Update (June 2026)
+
+After reviewing the actual sample events provided, updated schema to match:
+
+- Entry/exit events now use `id_token`, `store_code`, `event_timestamp`  
+- Added `gender_pred`, `age_pred`, `age_bucket` for demographic analytics  
+- Added `group_id`, `group_size` for group entry handling  
+- Added `is_face_hidden` flag for privacy-compliant detection  
+- Zone events now include `zone_hotspot_x/y`, `zone_type`, `is_revenue_zone`  
+- Queue events use `queue_join_ts`, `queue_served_ts`, `wait_seconds`, `abandoned`  
+
+### AI-Assisted Decision 4: Schema Alignment
+
+Claude helped identify the mismatch between my original schema and the actual sample events. I reviewed the sample_events.jsonl and overrode the original unified schema in favour of three typed event classes (EntryExitEvent, ZoneEvent, QueueEvent) that exactly match the provided sample. The ingestion layer now normalises all three types into a single SQLite table for query simplicity.

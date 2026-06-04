@@ -1,4 +1,4 @@
-import uuid, logging, json
+import uuid, logging, json, hashlib
 from datetime import datetime, timezone
 from fastapi import APIRouter, Request
 from app.models import IngestRequest, IngestResponse
@@ -50,7 +50,7 @@ async def ingest_events(req: IngestRequest, request: Request):
             store_id = _get_store_id(ev)
             visitor_id = _get_visitor_id(ev)
             timestamp = _get_timestamp(ev)
-            event_id = ev.get("queue_event_id") or str(uuid.uuid4())
+            import hashlib`n            raw_key = f"{ev.get(chr(39)event_type{chr(39))}:{_get_store_id(ev)}:{_get_visitor_id(ev)}:{_get_timestamp(ev)}"`n            event_id = ev.get("queue_event_id") or hashlib.md5(raw_key.encode()).hexdigest()
             try:
                 if event_type in ENTRY_EXIT_TYPES:
                     conn.execute("""
@@ -143,3 +143,5 @@ async def ingest_events(req: IngestRequest, request: Request):
     }))
     return IngestResponse(accepted=accepted, rejected=rejected,
                           duplicate=duplicate, errors=errors)
+
+
